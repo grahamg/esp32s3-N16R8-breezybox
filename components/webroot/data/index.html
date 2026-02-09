@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32-S3 BreezyBox</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        .chip-info {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        code {
+            background: #2c3e50;
+            color: #2ecc71;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #7f8c8d;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESP32-S3 BreezyBox</h1>
+
+        <p>Welcome to <strong>BreezyBox</strong> - a Unix-like shell environment running on the ESP32-S3 microcontroller!</p>
+
+        <div class="chip-info">
+            <h2>Hardware Specifications</h2>
+            <ul>
+                <li><strong>Chip:</strong> ESP32-S3-N16R8 (Lonely Binary Gold Edition)</li>
+                <li><strong>CPU:</strong> Dual-core Xtensa LX7 @ 240 MHz</li>
+                <li><strong>Flash:</strong> 16MB</li>
+                <li><strong>PSRAM:</strong> 8MB</li>
+                <li><strong>Connectivity:</strong> WiFi 2.4GHz + Bluetooth 5.0 LE</li>
+                <li><strong>Interface:</strong> Dual USB Type-C (power & data)</li>
+            </ul>
+        </div>
+
+        <h2>BreezyBox Features</h2>
+        <div class="features">
+            <div class="feature">File System</div>
+            <div class="feature">WiFi Manager</div>
+            <div class="feature">Virtual Terminals</div>
+            <div class="feature">Shell Scripts</div>
+            <div class="feature">ELF Execution</div>
+            <div class="feature">Unix Commands</div>
+        </div>
+
+        <h2>Available Commands</h2>
+        <p>BreezyBox provides 20+ Unix-like commands including:</p>
+        <ul>
+            <li><strong>File Operations:</strong> <code>ls</code>, <code>cat</code>, <code>cp</code>, <code>mv</code>, <code>rm</code>, <code>mkdir</code></li>
+            <li><strong>Networking:</strong> <code>wifi</code>, <code>httpd</code> (this server!)</li>
+            <li><strong>System:</strong> <code>free</code>, <code>df</code>, <code>date</code></li>
+            <li><strong>Utilities:</strong> <code>head</code>, <code>tail</code>, <code>wc</code>, <code>more</code></li>
+            <li><strong>Apps:</strong> <code>eget user/repo</code> - download and run ELF programs</li>
+        </ul>
+
+        <h2>Installing Apps</h2>
+        <p>Extend functionality by downloading apps from GitHub:</p>
+        <code>$ eget valdanylchuk/breezyapps</code>
+
+        <h2>Resources</h2>
+        <ul>
+            <li><a href="https://github.com/grahamg/esp32s3-N16R8-breezybox" target="_blank">Project Repository</a></li>
+            <li><a href="https://github.com/valdanylchuk/breezybox" target="_blank">BreezyBox Component</a></li>
+            <li><a href="https://github.com/valdanylchuk/breezyapps" target="_blank">BreezyApps Collection</a></li>
+            <li><a href="https://lonelybinary.com" target="_blank">Lonely Binary Hardware</a></li>
+        </ul>
+
+        <div class="footer">
+            <p>ESP32-S3 BreezyBox Project</p>
+            <p>MIT License - Graham Greenfield &lt;grahamg@gmail.com&gt;</p>
+        </div>
+    </div>
+</body>
+</html>

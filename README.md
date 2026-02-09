@@ -103,15 +103,27 @@ $ eget valdanylchuk/breezyapps
 
 The `eget` command downloads ELF binaries from GitHub releases and makes them executable on your device. Use the format `eget user/repo` to install apps from any compatible repository.
 
+### Running the Web Server
+
+The project includes a sample web root at `/root/www-root/` with an HTML page describing the project. To start the HTTP server:
+
+```bash
+$ httpd /root/www-root
+```
+
+Then access the web interface at `http://<device-ip>/` from your browser. The default page provides project information, hardware specs, and links to resources.
+
 ## Memory Configuration
 
 The ESP32-S3-N16R8 has two types of RAM:
 - **Internal SRAM**: ~400KB usable, very fast (CPU speed)
 - **External PSRAM**: 8MB, slower (SPI speed ~80-120MHz)
 
-### Enabling PSRAM
+**This project is pre-configured with the aggressive PSRAM strategy**, providing ~7.5MB of usable RAM for optimal shell and application performance.
 
-By default, only internal SRAM is used. To enable the 8MB PSRAM:
+### PSRAM Configuration (Already Enabled)
+
+The project comes with PSRAM enabled using aggressive allocation. If you need to modify this:
 
 ```bash
 idf.py menuconfig
@@ -124,30 +136,51 @@ Navigate to: `Component config` → `ESP PSRAM`
 
 ### Memory Allocation Strategies
 
-**Conservative (Better Performance)**
+**Aggressive (Maximum RAM) - CONFIGURED**
+
+This project uses the aggressive strategy by default:
+- Normal `malloc()` automatically uses PSRAM
+- BSS segment placed in external memory
+- WiFi and LWIP buffers in PSRAM
+- **Result**: ~7.5MB RAM available, simpler code
+- **Best for**: Shell commands, file operations, data processing (perfect for BreezyBox)
+
+**Conservative (Better Performance) - Optional**
+
+If you need to switch to conservative for real-time operations:
 - `Component config` → `ESP PSRAM` → `SPI RAM config`
 - Set `SPI RAM access method` to `Make RAM allocatable using malloc() with MALLOC_CAP_SPIRAM`
 - Keep ~160KB reserved for WiFi/DMA
-- **Result**: Fast internal SRAM for critical operations, PSRAM for explicit large allocations
-- **Use when**: You need low-latency operations or real-time control
+- **Result**: Fast internal SRAM for critical operations, PSRAM for explicit allocations
+- **Use when**: Adding motor control, audio processing, or hard timing requirements
 
-**Aggressive (Maximum RAM)**
-- `Component config` → `ESP PSRAM` → `SPI RAM config`
-- Set `SPI RAM access method` to `Make RAM allocatable using malloc() as well`
-- Enable `Allow .bss segment placed in external memory`
-- Enable `Try to allocate memories of WiFi and LWIP in SPIRAM firstly`
-- **Result**: ~7.5MB RAM available, simpler code (normal malloc uses PSRAM)
-- **Use when**: Running shell commands, file operations, or data processing (recommended for BreezyBox)
+### Performance Tradeoffs: Real-Time Apps vs Command-Line Shell Apps
 
-### Performance Tradeoffs
+**Understanding Memory Speed:**
 
-| Feature | Internal SRAM | PSRAM |
-|---------|---------------|-------|
-| Speed | Very Fast | 2-3x slower |
-| Size | ~400KB | 8MB |
-| Best For | Interrupt handlers, DMA, WiFi buffers | File caching, large buffers, application data |
+| Memory Type | Speed | Size | Access Time |
+|-------------|-------|------|-------------|
+| **Internal SRAM** | Very Fast (CPU speed ~240MHz) | ~400KB | Single cycle |
+| **External PSRAM** | Slower (SPI ~80-120MHz) | 8MB | 2-3x slower |
 
-**For BreezyBox shell usage**, the aggressive approach is recommended. Shell commands, file operations, and downloaded ELF apps benefit from maximum available RAM, and the speed difference is negligible for interactive use.
+**Which Strategy to Use?**
+
+| Application Type | Recommended Strategy | Why? |
+|------------------|---------------------|------|
+| **Real-Time Apps** (motor control, audio processing, robotics, interrupt-heavy code) | **Conservative** | Critical operations need fast SRAM. Microsecond-level latency matters. Keep interrupt handlers, DMA buffers, and time-critical data in fast internal memory. |
+| **Command-Line Shell Apps** (BreezyBox, file managers, web servers, data logging) | **Aggressive** | Human interaction is slow (~100ms scale). File operations, text processing, and shell commands don't need microsecond speed. The 2-3x memory slowdown is imperceptible to users. Benefit: 20x more RAM (8MB vs 400KB). |
+
+**For This BreezyBox Project:**
+
+The **aggressive approach is strongly recommended** because:
+- Shell commands execute in milliseconds - PSRAM speed is more than adequate
+- File operations benefit from large buffers (can cache entire files in RAM)
+- Downloaded ELF apps have access to ~7.5MB instead of ~300KB
+- Virtual terminals (4x ~10KB buffers) fit easily in PSRAM
+- Simpler code - no need for special `heap_caps_malloc()` calls
+
+**When to use Conservative instead:**
+Only if you're adding real-time features like motor control, audio streaming, or hard timing requirements where every microsecond counts.
 
 ### Checking Memory Usage
 
@@ -175,7 +208,9 @@ Dependencies are managed via `dependencies.lock` and installed to `managed_compo
 ```
 .
 ├── main/                   # Application source code
-├── components/             # Custom components
+├── components/
+│   ├── breezybox/         # BreezyBox shell component (fork)
+│   └── webroot/           # Web root initialization component
 ├── CMakeLists.txt         # Project build configuration
 ├── partitions.csv         # Partition table
 └── sdkconfig              # ESP-IDF configuration

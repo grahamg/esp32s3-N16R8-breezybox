@@ -4,6 +4,7 @@
 #include "esp_log.h"
 #include "esp_console.h"
 #include "breezybox.h"
+#include "webroot.h"
 
 static const char *TAG = "v0.0.1";
 
@@ -15,6 +16,9 @@ void app_main(void)
     ESP_ERROR_CHECK(breezybox_start(8192, 5));
 
     ESP_LOGI(TAG, "Shell started");
+
+    // Initialize web root directory with sample content
+    webroot_init();
 
     while(1) {
         vTaskDelay(pdMS_TO_TICKS(1000));
