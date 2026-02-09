@@ -103,6 +103,62 @@ $ eget valdanylchuk/breezyapps
 
 The `eget` command downloads ELF binaries from GitHub releases and makes them executable on your device. Use the format `eget user/repo` to install apps from any compatible repository.
 
+## Memory Configuration
+
+The ESP32-S3-N16R8 has two types of RAM:
+- **Internal SRAM**: ~400KB usable, very fast (CPU speed)
+- **External PSRAM**: 8MB, slower (SPI speed ~80-120MHz)
+
+### Enabling PSRAM
+
+By default, only internal SRAM is used. To enable the 8MB PSRAM:
+
+```bash
+idf.py menuconfig
+```
+
+Navigate to: `Component config` → `ESP PSRAM`
+1. Enable `Support for external, SPI-connected RAM`
+2. Select `Octal Mode PSRAM` (required for N16R8 hardware)
+3. Choose a memory allocation strategy (see below)
+
+### Memory Allocation Strategies
+
+**Conservative (Better Performance)**
+- `Component config` → `ESP PSRAM` → `SPI RAM config`
+- Set `SPI RAM access method` to `Make RAM allocatable using malloc() with MALLOC_CAP_SPIRAM`
+- Keep ~160KB reserved for WiFi/DMA
+- **Result**: Fast internal SRAM for critical operations, PSRAM for explicit large allocations
+- **Use when**: You need low-latency operations or real-time control
+
+**Aggressive (Maximum RAM)**
+- `Component config` → `ESP PSRAM` → `SPI RAM config`
+- Set `SPI RAM access method` to `Make RAM allocatable using malloc() as well`
+- Enable `Allow .bss segment placed in external memory`
+- Enable `Try to allocate memories of WiFi and LWIP in SPIRAM firstly`
+- **Result**: ~7.5MB RAM available, simpler code (normal malloc uses PSRAM)
+- **Use when**: Running shell commands, file operations, or data processing (recommended for BreezyBox)
+
+### Performance Tradeoffs
+
+| Feature | Internal SRAM | PSRAM |
+|---------|---------------|-------|
+| Speed | Very Fast | 2-3x slower |
+| Size | ~400KB | 8MB |
+| Best For | Interrupt handlers, DMA, WiFi buffers | File caching, large buffers, application data |
+
+**For BreezyBox shell usage**, the aggressive approach is recommended. Shell commands, file operations, and downloaded ELF apps benefit from maximum available RAM, and the speed difference is negligible for interactive use.
+
+### Checking Memory Usage
+
+After flashing, type `free` in the shell to see memory usage:
+
+```bash
+$ free
+SRAM:     300K free,    280K min,    400K total
+PSRAM:    7.5M free,    7.5M min,    8.0M total
+```
+
 ## Dependencies
 
 Project uses the following components from ESP-IDF Component Manager:
