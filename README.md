@@ -276,7 +276,6 @@ Dependencies are managed via `dependencies.lock` and installed to `managed_compo
 .
 ├── main/                   # Application source code
 ├── components/
-│   ├── breezybox/         # BreezyBox shell component (fork)
 │   └── webroot/           # Web root initialization component
 ├── CMakeLists.txt         # Project build configuration
 ├── partitions.csv         # Partition table
