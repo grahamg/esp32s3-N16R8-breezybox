@@ -4,3 +4,16 @@ cmake_minimum_required(VERSION 3.16)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(main)
+
+# Copy custom symbol table to ELF loader component
+add_custom_target(copy_symbols ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${PROJECT_DIR}/main/symbols.c
+        ${PROJECT_DIR}/managed_components/espressif__elf_loader/src/esp_all_symbol.c
+    COMMENT "Copying symbols.c to ELF loader component"
+)
+
+# Ensure symbol copy happens before ELF loader builds
+if(TARGET __idf_espressif__elf_loader)
+    add_dependencies(__idf_espressif__elf_loader copy_symbols)
+endif()

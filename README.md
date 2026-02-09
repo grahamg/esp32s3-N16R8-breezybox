@@ -286,6 +286,10 @@ Dependencies are managed via `dependencies.lock` and installed to `managed_compo
 
 Graham Greenfield <grahamg@gmail.com>
 
+## Credits
+
+Symbol export table (`main/symbols.c`) derived from [breezydemo](https://github.com/valdanylchuk/breezydemo) by Valentyn Danylchuk, used as reference material for ELF program execution support.
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
