@@ -1,0 +1,32 @@
+# Build outputs
+build/
+*.bin
+*.elf
+*.map
+
+# ESP-IDF Component Manager
+managed_components/
+
+# SDK configuration
+sdkconfig.old
+.cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
