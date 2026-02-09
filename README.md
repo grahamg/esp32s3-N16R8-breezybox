@@ -113,6 +113,73 @@ $ httpd /root/www-root
 
 Then access the web interface at `http://<device-ip>/` from your browser. The default page provides project information, hardware specs, and links to resources.
 
+## WiFi Configuration
+
+### Using BreezyBox WiFi Commands
+
+The easiest way to configure WiFi is from within the BreezyBox shell. WiFi credentials are stored in NVS (non-volatile storage) and persist across reboots.
+
+**Scan for available networks:**
+```bash
+$ wifi scan
+```
+
+**Connect to a network:**
+```bash
+$ wifi connect MyNetwork MyPassword
+```
+
+For open networks (no password):
+```bash
+$ wifi connect MyNetwork
+```
+
+**Check connection status:**
+```bash
+$ wifi status
+```
+
+**Disconnect from WiFi:**
+```bash
+$ wifi disconnect
+```
+
+**Forget saved credentials:**
+```bash
+$ wifi forget
+```
+
+Once connected, the device will automatically reconnect on subsequent boots.
+
+### Pre-configuring WiFi via menuconfig
+
+You can also configure default WiFi credentials through the ESP-IDF build system. This is useful for automated provisioning or factory configuration.
+
+```bash
+idf.py menuconfig
+```
+
+Navigate to: `Component config` → `BreezyBox Configuration` (if available) or manually edit `sdkconfig`:
+
+```
+CONFIG_BREEZYBOX_WIFI_SSID="YourNetworkName"
+CONFIG_BREEZYBOX_WIFI_PASSWORD="YourPassword"
+```
+
+Note: Runtime configuration via the `wifi` command takes precedence over any build-time defaults.
+
+### Getting the IP Address
+
+After connecting to WiFi, check the assigned IP address:
+
+```bash
+$ wifi status
+Connected to: MyNetwork
+IP address: 192.168.1.100
+```
+
+Use this IP to access the web server or SSH into the device.
+
 ## Memory Configuration
 
 The ESP32-S3-N16R8 has two types of RAM:
